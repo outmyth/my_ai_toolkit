@@ -13,13 +13,68 @@ The scope spans the core areas of working with AI tools:
 | Area | What's here today |
 |------|-------------------|
 | **Prompt engineering** | Per-tool system prompts, 8 reusable slash commands, 2 ChatGPT/Claude Project templates |
-| **Behavioral rules** | A four-principle behavioral ruleset for LLM coding pitfalls — see [Sources](#sources) for the full table and [`EXAMPLES.md`](EXAMPLES.md) for worked examples |
+| **Behavioral rules** | A four-principle behavioral ruleset for LLM coding pitfalls — see [Best Practises](#best-practises) for the full table and [`EXAMPLES.md`](EXAMPLES.md) for worked examples |
 | **Harness engineering** | Claude Code plugin manifest, daily sync workflows that watch each external source and open notify-only PRs |
 | **Context management** | One source of truth per topic, mirrored into the location each editor reads natively — no per-tool drift |
 | **Memory** | *Planned — recommendations welcome.* |
 | **RAG knowledge base** | *Planned — recommendations welcome.* |
 
-See [Sources](#sources) below for which external author each piece comes from.
+See [Best Practises](#best-practises) for which external author each piece comes from, then [Install](#install) for how to pull them into your project.
+
+## Best Practises
+
+Each best practice in this repo is curated from an external community source. Each has its own license — treat the originals as authoritative. To add a new source, follow [`.github/SYNC.md`](.github/SYNC.md).
+
+### Andrej Karpathy — LLM coding observations
+
+[Original X post](https://x.com/karpathy/status/2015883857489522876) · distributed via [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills) · auto-synced by [`upstream-sync-check.yml`](.github/workflows/upstream-sync-check.yml) (watches HEAD SHA).
+
+**Contributes — four behavioral principles**
+
+| Principle | Addresses |
+|-----------|-----------|
+| **Think Before Coding** | Wrong assumptions, hidden confusion, missing tradeoffs |
+| **Simplicity First** | Overcomplication, bloated abstractions |
+| **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
+| **Goal-Driven Execution** | Vague goals — replace with verifiable success criteria |
+
+The same ruleset is installed at `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/karpathy-guidelines.mdc`, `.github/copilot-instructions.md`, and `skills/karpathy-guidelines/SKILL.md` so each tool reads it natively. Worked examples in [`EXAMPLES.md`](EXAMPLES.md).
+
+**Tradeoff** — these guidelines bias toward caution over speed. For trivial tasks (typo fixes, obvious one-liners), use judgment.
+
+**Signals it's working** — fewer unnecessary changes in diffs, fewer rewrites from overcomplication, clarifying questions arrive before implementation, clean minimal PRs.
+
+### Zevi — AI Development Workflow
+
+[Notion page](https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9) · auto-synced by [`notion-sync-check.yml`](.github/workflows/notion-sync-check.yml) (watches `last_edited_time`).
+
+All Zevi-derived files use a `zevi-` prefix so they group together and don't collide with built-ins or other sources.
+
+**Contributes — 8 slash commands** (in `.claude/commands/zevi-*.md`, mirrored in `.cursor/commands/zevi-*.md`). Type `/zevi` in Claude Code or Cursor to tab-complete the set.
+
+| Command | Purpose |
+|---------|---------|
+| `/zevi-create-issue` | Capture a bug or feature idea quickly while mid-development |
+| `/zevi-explore` | Understand the problem and current code before writing any code |
+| `/zevi-create-plan` | Generate a markdown execution plan with status tracking |
+| `/zevi-execute` | Implement the approved plan step by step, updating status as you go |
+| `/zevi-review` | Comprehensive code review (logging, errors, types, perf, security) |
+| `/zevi-peer-review` | Critically evaluate review findings from another model before acting |
+| `/zevi-document` | Update documentation (incl. CHANGELOG) after code changes |
+| `/zevi-learning-opportunity` | Pause and explain a concept at three increasing depths |
+
+VS Code / Copilot / Codex don't have project-scoped slash commands — open the file and copy the prompt body into chat.
+
+**Contributes — 2 Project system prompts** (paste into a ChatGPT or Claude *Project*'s custom instructions, not auto-loaded by an IDE):
+
+- [`projects/zevi-cto.md`](projects/zevi-cto.md) — A "CTO" persona that pushes back, asks clarifying questions, and breaks work into phases before you build.
+- [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md) — Brutally honest PM interview prep coach with a mock-interview mode.
+
+**Quick tips**
+
+- When context gets too long, start a fresh session with just the plan file.
+- When AI keeps failing at something, ask *"What in your system prompt or tooling made you make this mistake?"* — then update your docs so it doesn't happen again.
+- Model picks (Zevi's defaults): Claude for planning and complex logic, Codex for gnarly bugs, Gemini for UI, Cursor's Composer when speed matters.
 
 ## Install
 
@@ -89,61 +144,6 @@ Not auto-loaded by an IDE — paste the body into a ChatGPT or Claude *Project*'
 
 - [`projects/zevi-cto.md`](projects/zevi-cto.md)
 - [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md)
-
-## Sources
-
-Everything in this repo is derived from one of the external sources below. Each has its own license — treat the originals as authoritative. To add a new source, follow [`.github/SYNC.md`](.github/SYNC.md).
-
-### Andrej Karpathy — LLM coding observations
-
-[Original X post](https://x.com/karpathy/status/2015883857489522876) · distributed via [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills) · auto-synced by [`upstream-sync-check.yml`](.github/workflows/upstream-sync-check.yml) (watches HEAD SHA).
-
-**Contributes — four behavioral principles**
-
-| Principle | Addresses |
-|-----------|-----------|
-| **Think Before Coding** | Wrong assumptions, hidden confusion, missing tradeoffs |
-| **Simplicity First** | Overcomplication, bloated abstractions |
-| **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
-| **Goal-Driven Execution** | Vague goals — replace with verifiable success criteria |
-
-The same ruleset is installed at `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/karpathy-guidelines.mdc`, `.github/copilot-instructions.md`, and `skills/karpathy-guidelines/SKILL.md` so each tool reads it natively. Worked examples in [`EXAMPLES.md`](EXAMPLES.md).
-
-**Tradeoff** — these guidelines bias toward caution over speed. For trivial tasks (typo fixes, obvious one-liners), use judgment.
-
-**Signals it's working** — fewer unnecessary changes in diffs, fewer rewrites from overcomplication, clarifying questions arrive before implementation, clean minimal PRs.
-
-### Zevi — AI Development Workflow
-
-[Notion page](https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9) · auto-synced by [`notion-sync-check.yml`](.github/workflows/notion-sync-check.yml) (watches `last_edited_time`).
-
-All Zevi-derived files use a `zevi-` prefix so they group together and don't collide with built-ins or other sources.
-
-**Contributes — 8 slash commands** (in `.claude/commands/zevi-*.md`, mirrored in `.cursor/commands/zevi-*.md`). Type `/zevi` in Claude Code or Cursor to tab-complete the set.
-
-| Command | Purpose |
-|---------|---------|
-| `/zevi-create-issue` | Capture a bug or feature idea quickly while mid-development |
-| `/zevi-explore` | Understand the problem and current code before writing any code |
-| `/zevi-create-plan` | Generate a markdown execution plan with status tracking |
-| `/zevi-execute` | Implement the approved plan step by step, updating status as you go |
-| `/zevi-review` | Comprehensive code review (logging, errors, types, perf, security) |
-| `/zevi-peer-review` | Critically evaluate review findings from another model before acting |
-| `/zevi-document` | Update documentation (incl. CHANGELOG) after code changes |
-| `/zevi-learning-opportunity` | Pause and explain a concept at three increasing depths |
-
-VS Code / Copilot / Codex don't have project-scoped slash commands — open the file and copy the prompt body into chat.
-
-**Contributes — 2 Project system prompts** (paste into a ChatGPT or Claude *Project*'s custom instructions, not auto-loaded by an IDE):
-
-- [`projects/zevi-cto.md`](projects/zevi-cto.md) — A "CTO" persona that pushes back, asks clarifying questions, and breaks work into phases before you build.
-- [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md) — Brutally honest PM interview prep coach with a mock-interview mode.
-
-**Quick tips**
-
-- When context gets too long, start a fresh session with just the plan file.
-- When AI keeps failing at something, ask *"What in your system prompt or tooling made you make this mistake?"* — then update your docs so it doesn't happen again.
-- Model picks (Zevi's defaults): Claude for planning and complex logic, Codex for gnarly bugs, Gemini for UI, Cursor's Composer when speed matters.
 
 ## Repo Layout
 
