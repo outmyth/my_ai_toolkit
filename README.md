@@ -81,16 +81,48 @@ OpenAI Codex CLI reads `AGENTS.md` from the project root (and `~/.codex/AGENTS.m
 curl -o AGENTS.md https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/AGENTS.md
 ```
 
+## Workflow Commands
+
+Reusable slash commands adapted from [Zevi's AI Development Workflow](https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9). Each command is a markdown file with a YAML `description` header and a prompt body.
+
+| Command | Purpose |
+|---------|---------|
+| `/create-issue` | Capture a bug or feature idea quickly while mid-development |
+| `/explore` | Understand the problem and current code before writing any code |
+| `/create-plan` | Generate a markdown execution plan with status tracking |
+| `/execute` | Implement the approved plan step by step, updating status as you go |
+| `/code-review` | Comprehensive code review (logging, errors, types, perf, security) |
+| `/peer-review` | Critically evaluate review findings from another model before acting |
+| `/document` | Update documentation (incl. CHANGELOG) after code changes |
+| `/learning-opportunity` | Pause and explain a concept at three increasing depths |
+
+**Claude Code & Cursor** read these files natively from `.claude/commands/` and `.cursor/commands/`. Type `/` in chat to see the list.
+
+**VS Code / Copilot / Codex** don't have project-scoped slash commands — open the file in `.claude/commands/<name>.md` and copy the prompt body into chat.
+
+> `/code-review` is renamed from Zevi's `/review` to avoid shadowing the Claude Code built-in `/review`.
+
+## Project Templates
+
+System prompts for separate ChatGPT or Claude **Projects** (not auto-loaded by an IDE — paste them into a Project's custom instructions):
+
+- [`projects/cto.md`](projects/cto.md) — A "CTO" persona that pushes back, asks clarifying questions, and breaks work into phases before you build.
+- [`projects/interview-coach.md`](projects/interview-coach.md) — Brutally honest PM interview prep coach with a mock-interview mode.
+
 ## Repo Layout
 
 ```
 .claude-plugin/                  Claude Code plugin manifest
+.claude/commands/                Claude Code slash commands
+.cursor/commands/                Cursor slash commands
 .cursor/rules/                   Cursor project rule (alwaysApply)
 .github/copilot-instructions.md  VS Code + GitHub Copilot
+.github/workflows/               CI (upstream sync check)
 AGENTS.md                        Codex
 CLAUDE.md                        Claude Code per-project
 CURSOR.md                        Cursor setup notes
 EXAMPLES.md                      Worked examples of each principle
+projects/                        System prompts for ChatGPT/Claude Projects
 skills/karpathy-guidelines/      Portable skill (SKILL.md)
 ```
 
@@ -105,9 +137,15 @@ skills/karpathy-guidelines/      Portable skill (SKILL.md)
 
 These guidelines bias toward **caution over speed**. For trivial tasks (typo fixes, obvious one-liners), use judgment — not every change needs the full rigor.
 
+## Quick Tips
+
+- **When context gets too long:** Start a fresh session with just the plan file.
+- **When AI keeps failing at something:** Ask "What in your system prompt or tooling made you make this mistake?" Then update your docs so it doesn't happen again.
+- **Model picks (Zevi's defaults):** Claude for planning and complex logic. Codex for gnarly bugs. Gemini for UI. Cursor's Composer when speed matters.
+
 ## Credits
 
-Principles derived from [Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876). Distribution structure adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills).
+Principles derived from [Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876). Distribution structure adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills). Slash commands and project templates from [Zevi's AI Development Workflow](https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9).
 
 ## License
 
