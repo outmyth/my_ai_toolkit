@@ -1,0 +1,91 @@
+name: Notion sync check
+
+on:
+  schedule:
+    - cron: '30 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      PAGE_ID: 2c86baff-bc90-810f-a63b-d0ee8ecffce9
+      SITE: shorthaired-billboard-f9a.notion.site
+      PAGE_URL: https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare Notion last-edited timestamp
+        id: compare
+        run: |
+          set -euo pipefail
+          last_known=$(tr -d '[:space:]' < .github/notion-sync/last-version.txt)
+          curl -sSf -X POST "https://${SITE}/api/v3/loadPageChunk" \
+            -H 'Content-Type: application/json' \
+            -H 'User-Agent: Mozilla/5.0' \
+            -d "{\"pageId\":\"${PAGE_ID}\",\"limit\":1,\"chunkNumber\":0,\"cursor\":{\"stack\":[]},\"verticalColumns\":false}" \
+            > /tmp/notion-page.json
+          new_version=$(python3 -c "
+import json
+d = json.load(open('/tmp/notion-page.json'))
+print(d['recordMap']['block']['${PAGE_ID}']['value']['value']['last_edited_time'])
+")
+          echo "last_known=$last_known" >> "$GITHUB_OUTPUT"
+          echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+          if [ "$last_known" = "$new_version" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build PR body
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          LAST_KNOWN: ${{ steps.compare.outputs.last_known }}
+          NEW_VERSION: ${{ steps.compare.outputs.new_version }}
+        run: |
+          set -euo pipefail
+          python3 <<PY > /tmp/pr-body.md
+          import os
+          from datetime import datetime, timezone
+
+          def fmt(ms):
+              try:
+                  return datetime.fromtimestamp(int(ms)/1000, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+              except Exception:
+                  return '(unknown)'
+
+          last_known = os.environ['LAST_KNOWN']
+          new_version = os.environ['NEW_VERSION']
+          page_url = os.environ['PAGE_URL']
+
+          print(f"[Zevi's AI Development Workflow]({page_url}) was edited.\n")
+          print(f"**Previous edit:** {fmt(last_known)} (\`{last_known}\`)")
+          print(f"**Latest edit:**   {fmt(new_version)} (\`{new_version}\`)\n")
+          print("Notion does not expose a diff API — open the page and look for changes.\n")
+          print("After reviewing, update any of these files that need to track upstream:\n")
+          print("- \`.claude/commands/zevi-*.md\` (8 files)")
+          print("- \`.cursor/commands/zevi-*.md\` (8 files, mirror of above)")
+          print("- \`projects/zevi-cto.md\`")
+          print("- \`projects/zevi-interview-coach.md\`")
+          print("- README.md *Quick Tips* and *Workflow Commands* sections\n")
+          print("Merging this PR records the new timestamp so the next check compares against it.")
+          PY
+
+      - name: Update version file
+        if: steps.compare.outputs.changed == 'true'
+        run: echo "${{ steps.compare.outputs.new_version }}" > .github/notion-sync/last-version.txt
+
+      - name: Open or update PR
+        if: steps.compare.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: notion-sync/notify
+          base: main
+          title: "Notion: Zevi's AI Development Workflow updated"
+          body-path: /tmp/pr-body.md
+          commit-message: "chore: bump Notion sync timestamp"
