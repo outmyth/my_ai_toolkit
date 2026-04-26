@@ -1,4 +1,4 @@
-# My AI Toolkit
+# Mythium Context
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. Pre-wired for Claude Code, Cursor, VS Code, GitHub Copilot, and Codex.
 
@@ -34,21 +34,21 @@ Pick the file that matches your tool. Each one is the same content in the locati
 **Option A: Plugin marketplace (recommended)**
 
 ```
-/plugin marketplace add outmyth/my_ai_toolkit
-/plugin install karpathy-guidelines@my-ai-toolkit
+/plugin marketplace add outmyth/mythium-context
+/plugin install karpathy-guidelines@mythium-context
 ```
 
 **Option B: Per-project `CLAUDE.md`**
 
 ```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/CLAUDE.md
+curl -o CLAUDE.md https://raw.githubusercontent.com/outmyth/mythium-context/main/CLAUDE.md
 ```
 
 To append to an existing `CLAUDE.md`:
 
 ```bash
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/CLAUDE.md >> CLAUDE.md
+curl https://raw.githubusercontent.com/outmyth/mythium-context/main/CLAUDE.md >> CLAUDE.md
 ```
 
 ### Cursor
@@ -58,7 +58,7 @@ Copy the rule into your project:
 ```bash
 mkdir -p .cursor/rules
 curl -o .cursor/rules/karpathy-guidelines.mdc \
-  https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/.cursor/rules/karpathy-guidelines.mdc
+  https://raw.githubusercontent.com/outmyth/mythium-context/main/.cursor/rules/karpathy-guidelines.mdc
 ```
 
 It is committed with `alwaysApply: true`. See [`CURSOR.md`](CURSOR.md) for details.
@@ -70,7 +70,7 @@ Copilot Chat (in VS Code or on github.com) reads `.github/copilot-instructions.m
 ```bash
 mkdir -p .github
 curl -o .github/copilot-instructions.md \
-  https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/.github/copilot-instructions.md
+  https://raw.githubusercontent.com/outmyth/mythium-context/main/.github/copilot-instructions.md
 ```
 
 ### Codex
@@ -78,7 +78,7 @@ curl -o .github/copilot-instructions.md \
 OpenAI Codex CLI reads `AGENTS.md` from the project root (and `~/.codex/AGENTS.md` globally):
 
 ```bash
-curl -o AGENTS.md https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/AGENTS.md
+curl -o AGENTS.md https://raw.githubusercontent.com/outmyth/mythium-context/main/AGENTS.md
 ```
 
 ## Workflow Commands
