@@ -85,29 +85,29 @@ curl -o AGENTS.md https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/A
 
 Reusable slash commands adapted from [Zevi's AI Development Workflow](https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9). Each command is a markdown file with a YAML `description` header and a prompt body.
 
+All Zevi-derived files use a `zevi-` prefix so they group together and don't collide with built-ins or other sources.
+
 | Command | Purpose |
 |---------|---------|
-| `/create-issue` | Capture a bug or feature idea quickly while mid-development |
-| `/explore` | Understand the problem and current code before writing any code |
-| `/create-plan` | Generate a markdown execution plan with status tracking |
-| `/execute` | Implement the approved plan step by step, updating status as you go |
-| `/code-review` | Comprehensive code review (logging, errors, types, perf, security) |
-| `/peer-review` | Critically evaluate review findings from another model before acting |
-| `/document` | Update documentation (incl. CHANGELOG) after code changes |
-| `/learning-opportunity` | Pause and explain a concept at three increasing depths |
+| `/zevi-create-issue` | Capture a bug or feature idea quickly while mid-development |
+| `/zevi-explore` | Understand the problem and current code before writing any code |
+| `/zevi-create-plan` | Generate a markdown execution plan with status tracking |
+| `/zevi-execute` | Implement the approved plan step by step, updating status as you go |
+| `/zevi-review` | Comprehensive code review (logging, errors, types, perf, security) |
+| `/zevi-peer-review` | Critically evaluate review findings from another model before acting |
+| `/zevi-document` | Update documentation (incl. CHANGELOG) after code changes |
+| `/zevi-learning-opportunity` | Pause and explain a concept at three increasing depths |
 
-**Claude Code & Cursor** read these files natively from `.claude/commands/` and `.cursor/commands/`. Type `/` in chat to see the list.
+**Claude Code & Cursor** read these files natively from `.claude/commands/` and `.cursor/commands/`. Type `/zevi` in chat to see the list.
 
 **VS Code / Copilot / Codex** don't have project-scoped slash commands — open the file in `.claude/commands/<name>.md` and copy the prompt body into chat.
-
-> `/code-review` is renamed from Zevi's `/review` to avoid shadowing the Claude Code built-in `/review`.
 
 ## Project Templates
 
 System prompts for separate ChatGPT or Claude **Projects** (not auto-loaded by an IDE — paste them into a Project's custom instructions):
 
-- [`projects/cto.md`](projects/cto.md) — A "CTO" persona that pushes back, asks clarifying questions, and breaks work into phases before you build.
-- [`projects/interview-coach.md`](projects/interview-coach.md) — Brutally honest PM interview prep coach with a mock-interview mode.
+- [`projects/zevi-cto.md`](projects/zevi-cto.md) — A "CTO" persona that pushes back, asks clarifying questions, and breaks work into phases before you build.
+- [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md) — Brutally honest PM interview prep coach with a mock-interview mode.
 
 ## Repo Layout
 
