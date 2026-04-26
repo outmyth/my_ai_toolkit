@@ -109,6 +109,22 @@ System prompts for separate ChatGPT or Claude **Projects** (not auto-loaded by a
 - [`projects/zevi-cto.md`](projects/zevi-cto.md) — A "CTO" persona that pushes back, asks clarifying questions, and breaks work into phases before you build.
 - [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md) — Brutally honest PM interview prep coach with a mock-interview mode.
 
+## Sources
+
+Everything in this repo is derived from one of these external sources. Each has its own license; treat the originals as authoritative.
+
+- **[Andrej Karpathy's LLM coding observations](https://x.com/karpathy/status/2015883857489522876)** — distributed via [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills)
+  - **Contributes:** four behavioral principles (Think Before Coding · Simplicity First · Surgical Changes · Goal-Driven Execution) and worked examples
+  - **Lives in:** `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/karpathy-guidelines.mdc`, `.github/copilot-instructions.md`, `skills/karpathy-guidelines/SKILL.md`, `EXAMPLES.md`
+  - **Auto-synced:** [`upstream-sync-check.yml`](.github/workflows/upstream-sync-check.yml) (watches HEAD SHA)
+
+- **[Zevi's AI Development Workflow](https://shorthaired-billboard-f9a.notion.site/Zevi-s-AI-Development-Workflow-2c86baffbc90810fa63bd0ee8ecffce9)** (Notion)
+  - **Contributes:** 8 slash commands (`/zevi-*`), 2 ChatGPT/Claude Project system prompts, Quick Tips bullets
+  - **Lives in:** `.claude/commands/zevi-*.md`, `.cursor/commands/zevi-*.md`, `projects/zevi-*.md`, README *Quick Tips* section
+  - **Auto-synced:** [`notion-sync-check.yml`](.github/workflows/notion-sync-check.yml) (watches `last_edited_time`)
+
+To add a new source, see [`.github/SYNC.md`](.github/SYNC.md).
+
 ## Repo Layout
 
 ```
