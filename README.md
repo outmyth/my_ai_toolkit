@@ -163,6 +163,49 @@ projects/                        System prompts for ChatGPT/Claude Projects
 skills/karpathy-guidelines/      Portable skill (SKILL.md)
 ```
 
+## Roadmap
+
+Captured here for revisit; **nothing in this section is implemented yet.**
+
+### MCP server — `mythium-context-mcp`
+
+Expose this catalog over [Model Context Protocol](https://modelcontextprotocol.io) so external agents (Claude Desktop, Claude Code, Cursor, VS Code, any MCP-aware client) can discover and fetch best practices without copying files.
+
+**Proposed surface**
+
+| MCP primitive | What we'd expose |
+|---|---|
+| **Prompts** | Each `zevi-*` slash command + each project template + a `karpathy.principles` prompt — rendered with optional args |
+| **Resources** | Read-only docs: `mythium://karpathy/principles`, `mythium://karpathy/examples`, `mythium://zevi/commands/<name>`, `mythium://zevi/projects/<name>` |
+| **Tools** | `list_best_practices()`, `search_best_practices(query)`, `get_best_practice(id)` |
+
+**Distribution**
+
+- Phase 1: `npx mythium-context-mcp` via npm (stdio transport)
+- Phase 2 (optional): hosted HTTP/SSE endpoint for zero-install consumption
+
+**Tech stack:** Node/TypeScript with `@modelcontextprotocol/sdk` — the most mature MCP ecosystem and friction-free npm distribution.
+
+**Source of truth:** fetch from `raw.githubusercontent.com/outmyth/mythium-context/main` at runtime so updates merged into `main` flow through automatically — no MCP republish needed when a sync PR lands.
+
+**Phased plan**
+
+| Phase | Scope |
+|---|---|
+| 1 — MVP | stdio server; prompts only (8 commands + 2 templates + 1 Karpathy prompt) and one `list_best_practices` tool; publish to npm |
+| 2 | Add resources + `search_best_practices` + `get_best_practice`; CI auto-publish on tag |
+| 3 (optional) | Hosted HTTP/SSE endpoint at a public URL |
+
+**Open questions to resolve before implementing**
+
+- npm name availability — `mythium-context-mcp` vs scoped `@outmyth/mythium-context-mcp`
+- Bundle content at build vs runtime fetch (leaning runtime fetch for MVP)
+- Day-1 scope: prompts only, or include resources + search tools as well
+
+**What this would not change**
+
+Existing rule files, slash commands, project templates, plugin manifest, sync workflows, and curl install paths all keep working unchanged. MCP would be an *additional* consumption channel, not a replacement.
+
 ## License
 
 MIT
