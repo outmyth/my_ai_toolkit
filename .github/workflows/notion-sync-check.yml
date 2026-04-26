@@ -29,11 +29,7 @@ jobs:
             -H 'User-Agent: Mozilla/5.0' \
             -d "{\"pageId\":\"${PAGE_ID}\",\"limit\":1,\"chunkNumber\":0,\"cursor\":{\"stack\":[]},\"verticalColumns\":false}" \
             > /tmp/notion-page.json
-          new_version=$(python3 -c "
-import json
-d = json.load(open('/tmp/notion-page.json'))
-print(d['recordMap']['block']['${PAGE_ID}']['value']['value']['last_edited_time'])
-")
+          new_version=$(jq -r --arg id "$PAGE_ID" '.recordMap.block[$id].value.value.last_edited_time' /tmp/notion-page.json)
           echo "last_known=$last_known" >> "$GITHUB_OUTPUT"
           echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
           if [ "$last_known" = "$new_version" ]; then
@@ -49,32 +45,27 @@ print(d['recordMap']['block']['${PAGE_ID}']['value']['value']['last_edited_time'
           NEW_VERSION: ${{ steps.compare.outputs.new_version }}
         run: |
           set -euo pipefail
-          python3 <<PY > /tmp/pr-body.md
-          import os
-          from datetime import datetime, timezone
-
-          def fmt(ms):
-              try:
-                  return datetime.fromtimestamp(int(ms)/1000, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
-              except Exception:
-                  return '(unknown)'
-
-          last_known = os.environ['LAST_KNOWN']
-          new_version = os.environ['NEW_VERSION']
-          page_url = os.environ['PAGE_URL']
-
-          print(f"[Zevi's AI Development Workflow]({page_url}) was edited.\n")
-          print(f"**Previous edit:** {fmt(last_known)} (\`{last_known}\`)")
-          print(f"**Latest edit:**   {fmt(new_version)} (\`{new_version}\`)\n")
-          print("Notion does not expose a diff API — open the page and look for changes.\n")
-          print("After reviewing, update any of these files that need to track upstream:\n")
-          print("- \`.claude/commands/zevi-*.md\` (8 files)")
-          print("- \`.cursor/commands/zevi-*.md\` (8 files, mirror of above)")
-          print("- \`projects/zevi-cto.md\`")
-          print("- \`projects/zevi-interview-coach.md\`")
-          print("- README.md *Quick Tips* and *Workflow Commands* sections\n")
-          print("Merging this PR records the new timestamp so the next check compares against it.")
-          PY
+          fmt() { date -u -d "@$(($1 / 1000))" '+%Y-%m-%d %H:%M:%S UTC'; }
+          last_fmt=$(fmt "$LAST_KNOWN")
+          new_fmt=$(fmt "$NEW_VERSION")
+          {
+            echo "[Zevi's AI Development Workflow](${PAGE_URL}) was edited."
+            echo
+            echo "**Previous edit:** ${last_fmt} (\`${LAST_KNOWN}\`)"
+            echo "**Latest edit:**   ${new_fmt} (\`${NEW_VERSION}\`)"
+            echo
+            echo "Notion does not expose a diff API — open the page and look for changes."
+            echo
+            echo "After reviewing, update any of these files that need to track upstream:"
+            echo
+            echo "- \`.claude/commands/zevi-*.md\` (8 files)"
+            echo "- \`.cursor/commands/zevi-*.md\` (8 files, mirror of above)"
+            echo "- \`projects/zevi-cto.md\`"
+            echo "- \`projects/zevi-interview-coach.md\`"
+            echo "- README.md *Quick Tips* and *Workflow Commands* sections"
+            echo
+            echo "Merging this PR records the new timestamp so the next check compares against it."
+          } > /tmp/pr-body.md
 
       - name: Update version file
         if: steps.compare.outputs.changed == 'true'
