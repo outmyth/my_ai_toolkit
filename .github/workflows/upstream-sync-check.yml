@@ -1,0 +1,82 @@
+name: Upstream sync check
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      UPSTREAM: forrestchang/andrej-karpathy-skills
+      UPSTREAM_BRANCH: main
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare upstream SHA
+        id: compare
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          last_sha=$(tr -d '[:space:]' < .github/upstream-sync/last-sha.txt)
+          new_sha=$(gh api "repos/${UPSTREAM}/commits/${UPSTREAM_BRANCH}" --jq .sha)
+          echo "last_sha=$last_sha" >> "$GITHUB_OUTPUT"
+          echo "new_sha=$new_sha"  >> "$GITHUB_OUTPUT"
+          if [ "$last_sha" = "$new_sha" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true"  >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build PR body
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LAST_SHA: ${{ steps.compare.outputs.last_sha }}
+          NEW_SHA:  ${{ steps.compare.outputs.new_sha }}
+        run: |
+          set -euo pipefail
+          {
+            echo "Upstream [\`${UPSTREAM}\`](https://github.com/${UPSTREAM}) has new commits."
+            echo
+            echo "**Range:** \`${LAST_SHA:0:7}...${NEW_SHA:0:7}\`"
+            echo "**Compare:** https://github.com/${UPSTREAM}/compare/${LAST_SHA}...${NEW_SHA}"
+            echo
+            echo "## Commits"
+            gh api "repos/${UPSTREAM}/compare/${LAST_SHA}...${NEW_SHA}" \
+              --jq '.commits[] | "- [`" + .sha[0:7] + "`](" + .html_url + ") " + (.commit.message | split("\n")[0])'
+            echo
+            echo "## Files changed"
+            gh api "repos/${UPSTREAM}/compare/${LAST_SHA}...${NEW_SHA}" \
+              --jq '.files[] | "- `" + .filename + "` (" + .status + ", +" + (.additions|tostring) + "/-" + (.deletions|tostring) + ")"'
+            echo
+            echo "---"
+            echo
+            echo "Review the upstream diff and decide whether to mirror the change into:"
+            echo "- \`CLAUDE.md\`, \`AGENTS.md\`, \`.github/copilot-instructions.md\`"
+            echo "- \`.cursor/rules/karpathy-guidelines.mdc\`"
+            echo "- \`skills/karpathy-guidelines/SKILL.md\`"
+            echo "- \`EXAMPLES.md\`"
+            echo
+            echo "Merging this PR records the new SHA so the next check compares against it."
+          } > /tmp/pr-body.md
+
+      - name: Update SHA file
+        if: steps.compare.outputs.changed == 'true'
+        run: echo "${{ steps.compare.outputs.new_sha }}" > .github/upstream-sync/last-sha.txt
+
+      - name: Open or update PR
+        if: steps.compare.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: upstream-sync/notify
+          base: main
+          title: "Upstream changes in ${{ env.UPSTREAM }}"
+          body-path: /tmp/pr-body.md
+          commit-message: "chore: bump upstream sync SHA"
