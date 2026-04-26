@@ -23,9 +23,72 @@ See [Sources](#sources) below for which external author each piece comes from.
 
 ## Install
 
-Each source has its own install instructions in its [Sources](#sources) subsection — install only what you want.
+Pick your tool. Each block pulls the relevant files from every applicable source — drop any line you don't want.
 
 If you're working *in this repo*, everything is already wired up; no install needed.
+
+### Claude Code
+
+Plugin (installs the Karpathy ruleset as a skill):
+
+```
+/plugin marketplace add outmyth/mythium-context
+/plugin install karpathy-guidelines@mythium-context
+```
+
+Manual files:
+
+```bash
+RAW=https://raw.githubusercontent.com/outmyth/mythium-context/main
+COMMANDS="create-issue explore create-plan execute review peer-review document learning-opportunity"
+
+# Karpathy — behavioral ruleset
+curl -o CLAUDE.md $RAW/CLAUDE.md
+
+# Zevi — 8 slash commands (/zevi-*)
+mkdir -p .claude/commands
+for c in $COMMANDS; do curl -o ".claude/commands/zevi-$c.md" "$RAW/.claude/commands/zevi-$c.md"; done
+```
+
+### Cursor
+
+```bash
+RAW=https://raw.githubusercontent.com/outmyth/mythium-context/main
+COMMANDS="create-issue explore create-plan execute review peer-review document learning-opportunity"
+
+# Karpathy — behavioral ruleset (alwaysApply)
+mkdir -p .cursor/rules
+curl -o .cursor/rules/karpathy-guidelines.mdc $RAW/.cursor/rules/karpathy-guidelines.mdc
+
+# Zevi — 8 slash commands (/zevi-*)
+mkdir -p .cursor/commands
+for c in $COMMANDS; do curl -o ".cursor/commands/zevi-$c.md" "$RAW/.cursor/commands/zevi-$c.md"; done
+```
+
+### VS Code / GitHub Copilot
+
+```bash
+mkdir -p .github
+curl -o .github/copilot-instructions.md \
+  https://raw.githubusercontent.com/outmyth/mythium-context/main/.github/copilot-instructions.md
+```
+
+Karpathy ruleset only — Copilot has no project-scoped slash commands. To use Zevi's prompts, open a `zevi-*.md` file and copy the body into chat manually.
+
+### Codex
+
+```bash
+curl -o AGENTS.md https://raw.githubusercontent.com/outmyth/mythium-context/main/AGENTS.md
+```
+
+Karpathy ruleset only — Codex CLI has no project-scoped slash commands.
+
+### Project templates (any tool)
+
+Not auto-loaded by an IDE — paste the body into a ChatGPT or Claude *Project*'s custom instructions:
+
+- [`projects/zevi-cto.md`](projects/zevi-cto.md)
+- [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md)
 
 ## Sources
 
@@ -49,35 +112,6 @@ The same ruleset is installed at `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/karpat
 **Tradeoff** — these guidelines bias toward caution over speed. For trivial tasks (typo fixes, obvious one-liners), use judgment.
 
 **Signals it's working** — fewer unnecessary changes in diffs, fewer rewrites from overcomplication, clarifying questions arrive before implementation, clean minimal PRs.
-
-**Install in another project**
-
-Claude Code (plugin):
-
-```
-/plugin marketplace add outmyth/mythium-context
-/plugin install karpathy-guidelines@mythium-context
-```
-
-Or copy individual files:
-
-```bash
-RAW=https://raw.githubusercontent.com/outmyth/mythium-context/main
-
-# Claude Code
-curl -o CLAUDE.md $RAW/CLAUDE.md
-
-# Cursor
-mkdir -p .cursor/rules
-curl -o .cursor/rules/karpathy-guidelines.mdc $RAW/.cursor/rules/karpathy-guidelines.mdc
-
-# VS Code / GitHub Copilot
-mkdir -p .github
-curl -o .github/copilot-instructions.md $RAW/.github/copilot-instructions.md
-
-# Codex
-curl -o AGENTS.md $RAW/AGENTS.md
-```
 
 ### Zevi — AI Development Workflow
 
@@ -110,26 +144,6 @@ VS Code / Copilot / Codex don't have project-scoped slash commands — open the 
 - When context gets too long, start a fresh session with just the plan file.
 - When AI keeps failing at something, ask *"What in your system prompt or tooling made you make this mistake?"* — then update your docs so it doesn't happen again.
 - Model picks (Zevi's defaults): Claude for planning and complex logic, Codex for gnarly bugs, Gemini for UI, Cursor's Composer when speed matters.
-
-**Install in another project**
-
-```bash
-RAW=https://raw.githubusercontent.com/outmyth/mythium-context/main
-COMMANDS="create-issue explore create-plan execute review peer-review document learning-opportunity"
-
-# Slash commands — Claude Code
-mkdir -p .claude/commands
-for c in $COMMANDS; do curl -o ".claude/commands/zevi-$c.md" "$RAW/.claude/commands/zevi-$c.md"; done
-
-# Slash commands — Cursor (mirror)
-mkdir -p .cursor/commands
-for c in $COMMANDS; do curl -o ".cursor/commands/zevi-$c.md" "$RAW/.cursor/commands/zevi-$c.md"; done
-```
-
-Project templates aren't auto-loaded by an IDE — open the file on GitHub and paste the body into a ChatGPT or Claude *Project*'s custom instructions:
-
-- [`projects/zevi-cto.md`](projects/zevi-cto.md)
-- [`projects/zevi-interview-coach.md`](projects/zevi-interview-coach.md)
 
 ## Repo Layout
 
