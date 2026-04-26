@@ -1,29 +1,25 @@
 # Mythium Context
 
-Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. Pre-wired for Claude Code, Cursor, VS Code, GitHub Copilot, and Codex.
+A multi-tool bundle of best practices for working with AI coding agents — prompts, behavioral rules, slash commands, project templates, and the harness around them. Pre-wired for Claude Code, Cursor, VS Code, GitHub Copilot, and Codex.
 
-## The Problems
+## Overview
 
-From Andrej's post:
+One canonical answer to *"how should an AI coding agent act in this repo?"*, expressed in every format the major tools actually read.
 
-> "The models make wrong assumptions on your behalf and just run along with them without checking. They don't manage their confusion, don't seek clarifications, don't surface inconsistencies, don't present tradeoffs, don't push back when they should."
+Each piece of content is curated from a trusted community source — Karpathy is one of them, not the only one — committed once into this repo, and mirrored into the per-tool location that editor expects (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.claude/commands/`, …). Two notify-only GitHub Actions watch the upstreams and open a PR when a source changes; see [`.github/SYNC.md`](.github/SYNC.md).
 
-> "They really like to overcomplicate code and APIs, bloat abstractions, don't clean up dead code... implement a bloated construction over 1000 lines when 100 would do."
+The scope spans the core areas of working with AI tools:
 
-> "They still sometimes change/remove comments and code they don't sufficiently understand as side effects, even if orthogonal to the task."
+| Area | What's here today |
+|------|-------------------|
+| **Prompt engineering** | Per-tool system prompts, 8 reusable slash commands, 2 ChatGPT/Claude Project templates |
+| **Behavioral rules** | Four-principle ruleset addressing LLM coding pitfalls (Think Before Coding · Simplicity First · Surgical Changes · Goal-Driven Execution) — worked examples in [`EXAMPLES.md`](EXAMPLES.md) |
+| **Harness engineering** | Claude Code plugin manifest, daily sync workflows that watch each external source and open notify-only PRs |
+| **Context management** | One source of truth per topic, mirrored into the location each editor reads natively — no per-tool drift |
+| **Memory** | *Planned — recommendations welcome.* |
+| **RAG knowledge base** | *Planned — recommendations welcome.* |
 
-## The Solution
-
-Four principles in one file that directly address these issues:
-
-| Principle | Addresses |
-|-----------|-----------|
-| **Think Before Coding** | Wrong assumptions, hidden confusion, missing tradeoffs |
-| **Simplicity First** | Overcomplication, bloated abstractions |
-| **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
-| **Goal-Driven Execution** | Leverage through tests-first, verifiable success criteria |
-
-See [`EXAMPLES.md`](EXAMPLES.md) for concrete code samples of each principle.
+See [Sources](#sources) below for which external author each piece comes from.
 
 ## Install
 
