@@ -116,8 +116,9 @@ System prompts for separate ChatGPT or Claude **Projects** (not auto-loaded by a
 .claude/commands/                Claude Code slash commands
 .cursor/commands/                Cursor slash commands
 .cursor/rules/                   Cursor project rule (alwaysApply)
+.github/SYNC.md                  Sync workflow reference (how to add new sources)
 .github/copilot-instructions.md  VS Code + GitHub Copilot
-.github/workflows/               CI (upstream sync check)
+.github/workflows/               Notify-only sync workflows (see .github/SYNC.md)
 AGENTS.md                        Codex
 CLAUDE.md                        Claude Code per-project
 CURSOR.md                        Cursor setup notes
