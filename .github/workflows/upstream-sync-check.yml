@@ -62,6 +62,7 @@ jobs:
             echo "- \`CLAUDE.md\`, \`AGENTS.md\`, \`.github/copilot-instructions.md\`"
             echo "- \`.cursor/rules/karpathy-guidelines.mdc\`"
             echo "- \`skills/karpathy-guidelines/SKILL.md\`"
+            echo "- \`.claude/skills/karpathy-guidelines/SKILL.md\`"
             echo "- \`EXAMPLES.md\`"
             echo
             echo "Merging this PR records the new SHA so the next check compares against it."

@@ -38,7 +38,7 @@ Each best practice in this repo is curated from an external community source. Ea
 | **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
 | **Goal-Driven Execution** | Vague goals — replace with verifiable success criteria |
 
-The same ruleset is installed at `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/karpathy-guidelines.mdc`, `.github/copilot-instructions.md`, and `skills/karpathy-guidelines/SKILL.md` so each tool reads it natively. Worked examples in [`EXAMPLES.md`](EXAMPLES.md).
+The same ruleset is installed at `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/karpathy-guidelines.mdc`, `.github/copilot-instructions.md`, `skills/karpathy-guidelines/SKILL.md`, and `.claude/skills/karpathy-guidelines/SKILL.md` so each tool reads it natively. Worked examples in [`EXAMPLES.md`](EXAMPLES.md).
 
 **Tradeoff** — these guidelines bias toward caution over speed. For trivial tasks (typo fixes, obvious one-liners), use judgment.
 
