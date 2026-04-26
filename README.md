@@ -1,99 +1,113 @@
-# 🧰 My AI Toolkit
+# My AI Toolkit
 
-A unified, portable repository for managing your AI coding assistant configuration across **Claude Code**, **Cursor**, and **OpenAI Codex CLI**.
+Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. Pre-wired for Claude Code, Cursor, VS Code, GitHub Copilot, and Codex.
 
-## Philosophy
+## The Problems
 
-Your AI toolkit is organized into six pillars:
+From Andrej's post:
 
-| Pillar | Directory | Purpose |
-|--------|-----------|---------|
-| **Skills** | `skills/` | Behavioral guidelines and capabilities (e.g., Karpathy guidelines) |
-| **Rules** | `rules/` | Project-wide coding standards, commit conventions, review checklists |
-| **Prompts** | `prompts/` | Reusable prompt templates for common workflows |
-| **Memory** | `memory/` | Persistent context — decisions, tech stack, naming conventions |
-| **Context** | `context/` | Project-specific files — architecture, API schemas, domain glossaries |
-| **Harness** | `harness/` | Harness engineering — test scaffolds, CI/CD chains, eval frameworks |
+> "The models make wrong assumptions on your behalf and just run along with them without checking. They don't manage their confusion, don't seek clarifications, don't surface inconsistencies, don't present tradeoffs, don't push back when they should."
 
-## Installed Skills
+> "They really like to overcomplicate code and APIs, bloat abstractions, don't clean up dead code... implement a bloated construction over 1000 lines when 100 would do."
 
-### ✅ Karpathy Guidelines
+> "They still sometimes change/remove comments and code they don't sufficiently understand as side effects, even if orthogonal to the task."
 
-Derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls. Source: [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills).
+## The Solution
 
-Four principles:
-1. **Think Before Coding** — Surface assumptions and tradeoffs before writing code.
-2. **Simplicity First** — Minimum code. No speculative features.
-3. **Surgical Changes** — Touch only what the request requires.
-4. **Goal-Driven Execution** — Define verifiable success criteria.
+Four principles in one file that directly address these issues:
 
-## Multi-Tool Support
+| Principle | Addresses |
+|-----------|-----------|
+| **Think Before Coding** | Wrong assumptions, hidden confusion, missing tradeoffs |
+| **Simplicity First** | Overcomplication, bloated abstractions |
+| **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
+| **Goal-Driven Execution** | Leverage through tests-first, verifiable success criteria |
 
-This toolkit provides config files for three major AI coding tools:
+See [`EXAMPLES.md`](EXAMPLES.md) for concrete code samples of each principle.
 
-| Tool | Config File | Location |
-|------|------------|----------|
-| **Claude Code** | `CLAUDE.md` | Root + each skill directory |
-| **Cursor** | `.cursorrules` | Root + each skill directory |
-| **OpenAI Codex** | `AGENTS.md` | Root + each skill directory |
+## Install
 
-### Quick Setup
+Pick the file that matches your tool. Each one is the same content in the location that tool reads.
 
-**Claude Code** — Drop this repo in your project root. Claude Code auto-reads `CLAUDE.md`.
+### Claude Code
 
-**Cursor** — Copy `.cursorrules` to your project root, or symlink it:
-```bash
-ln -s path/to/my_ai_toolkit/.cursorrules .cursorrules
+**Option A: Plugin marketplace (recommended)**
+
+```
+/plugin marketplace add outmyth/my_ai_toolkit
+/plugin install karpathy-guidelines@my-ai-toolkit
 ```
 
-**OpenAI Codex CLI** — Copy `AGENTS.md` to your project root, or symlink it:
-```bash
-ln -s path/to/my_ai_toolkit/AGENTS.md AGENTS.md
-```
-
-### Install Script
-
-Run the install script to symlink all config files into your project:
+**Option B: Per-project `CLAUDE.md`**
 
 ```bash
-./install.sh /path/to/your/project
+curl -o CLAUDE.md https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/CLAUDE.md
 ```
 
-## Adding a New Skill
+To append to an existing `CLAUDE.md`:
 
-1. Create a directory under `skills/your-skill-name/`
-2. Add three config files:
-   - `CLAUDE.md` — for Claude Code
-   - `.cursorrules` — for Cursor
-   - `AGENTS.md` — for OpenAI Codex
-3. Reference the skill in the root config files
-4. Commit and push
+```bash
+echo "" >> CLAUDE.md
+curl https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/CLAUDE.md >> CLAUDE.md
+```
 
-## Repo Structure
+### Cursor
+
+Copy the rule into your project:
+
+```bash
+mkdir -p .cursor/rules
+curl -o .cursor/rules/karpathy-guidelines.mdc \
+  https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/.cursor/rules/karpathy-guidelines.mdc
+```
+
+It is committed with `alwaysApply: true`. See [`CURSOR.md`](CURSOR.md) for details.
+
+### VS Code / GitHub Copilot
+
+Copilot Chat (in VS Code or on github.com) reads `.github/copilot-instructions.md`:
+
+```bash
+mkdir -p .github
+curl -o .github/copilot-instructions.md \
+  https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/.github/copilot-instructions.md
+```
+
+### Codex
+
+OpenAI Codex CLI reads `AGENTS.md` from the project root (and `~/.codex/AGENTS.md` globally):
+
+```bash
+curl -o AGENTS.md https://raw.githubusercontent.com/outmyth/my_ai_toolkit/main/AGENTS.md
+```
+
+## Repo Layout
 
 ```
-my_ai_toolkit/
-├── CLAUDE.md              # Root config → Claude Code
-├── .cursorrules           # Root config → Cursor
-├── AGENTS.md              # Root config → OpenAI Codex
-├── README.md
-├── install.sh             # Symlink installer
-├── skills/
-│   └── karpathy-guidelines/
-│       ├── CLAUDE.md
-│       ├── .cursorrules
-│       └── AGENTS.md
-├── rules/
-│   └── README.md
-├── prompts/
-│   └── README.md
-├── memory/
-│   └── README.md
-├── context/
-│   └── README.md
-└── harness/
-    └── README.md
+.claude-plugin/                  Claude Code plugin manifest
+.cursor/rules/                   Cursor project rule (alwaysApply)
+.github/copilot-instructions.md  VS Code + GitHub Copilot
+AGENTS.md                        Codex
+CLAUDE.md                        Claude Code per-project
+CURSOR.md                        Cursor setup notes
+EXAMPLES.md                      Worked examples of each principle
+skills/karpathy-guidelines/      Portable skill (SKILL.md)
 ```
+
+## How to Know It's Working
+
+- **Fewer unnecessary changes in diffs** — Only requested changes appear
+- **Fewer rewrites due to overcomplication** — Code is simple the first time
+- **Clarifying questions come before implementation** — Not after mistakes
+- **Clean, minimal PRs** — No drive-by refactoring or "improvements"
+
+## Tradeoff
+
+These guidelines bias toward **caution over speed**. For trivial tasks (typo fixes, obvious one-liners), use judgment — not every change needs the full rigor.
+
+## Credits
+
+Principles derived from [Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876). Distribution structure adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills).
 
 ## License
 
